@@ -5,8 +5,8 @@
 This project is centered around learning how to implement OOP concepts in JavaScript.
 
 ## TO-DO:
-1. Set up HTML/CSS/JS skeleton files
-2. Add function to take user input and based on that input add a new book to a Books array.
+1. ~~Set up HTML/CSS/JS skeleton files~~
+2. ~~Add function to take user input and based on that input add a new book to a Books array.~~
   ie:
   ```javascript
     let myLibrary = [];

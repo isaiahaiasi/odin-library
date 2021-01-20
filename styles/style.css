@@ -1,0 +1,31 @@
+html,body {
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
+}
+
+main {
+  width:auto;
+  height:auto;
+  box-sizing:border-box;
+
+  display:flex;
+  flex-direction:column;
+  align-items:space-between;
+}
+
+footer {
+  position:absolute;
+  bottom:0;
+}
+
+/*  TODO: create a separate JS file that adds this class to everything
+    - Then, include that script as a separate link in html,
+    and I can just comment it out when I don't want it!
+    - I could even include some sort of html flags to specify the scope
+    of what I want to add it to. */
+.debug-viz {
+  /* Colors could be randomized (or coded) to distinguish elements */
+  background-color:rgba(124, 124, 124, 0.493);
+  border: 1px solid red;
+}
