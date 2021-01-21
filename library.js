@@ -1,6 +1,5 @@
-// I'm not sure if it would be better to use a map or an array
-// map: instant access if I want a specific book, & quick to remove
-// array: simpler, ?...
+// Using a map instead of an array b/c main use will be getting a book by key
+// (book dom element finding its entry in map to delete, toggle isRead, etc)
 const library = new Map();
 
 function Book(title, author, pageCount, isRead, rating) {
@@ -47,16 +46,22 @@ function getNewBookPrompt() {
   newProps.push(prompt('Who is the author?'));
   newProps.push(prompt('How many pages long is it?'));
   newProps.push(prompt('Have you read it?'));
-  newProps.push(prompt('What is it\'s rating?'));
   return newProps;
 }
 
 // * DOM
-const bookContainer = document.querySelector('.library');
-const modalForm = document.querySelector('.modal').querySelector('form');
+const bookCntr = document.querySelector('.library');
+const modalAddBookCntr = document.querySelector('#modal-container-addbook');
 
 // Add any generated HTML to the page (ie, the form fields...)
-function initPage() {
+function initModalAddBook() {
+  // Add bg
+  // const modalBG = document.createElement('div');
+  // modalBG.classList.add('modal-bg');
+  // modalAddBookCntr.appendChild(modalBG);
+
+  // Add form elements
+  const modalForm = modalAddBookCntr.querySelector('form');
   modalForm.appendChild(formItem('Title:','title','text',true));
   modalForm.appendChild(formItem('Author:','author','text',true));
   modalForm.appendChild(formItem('Page count:','pageCount','number',true));
@@ -64,11 +69,6 @@ function initPage() {
   modalForm.appendChild(formItem('Have read:','isRead','checkbox',true));
   modalForm.appendChild(formItem('','Add book!','submit',false));
 }
-
-// Add Event Listeners
-document.querySelector('.add-book').addEventListener('click', () => {
-  modalForm.style.display === 'none' ? 'block' : 'none';
-});
 
 // Element generators
 function bookElement(book) {
@@ -96,8 +96,7 @@ function bookPropertyElement(book, property) {
   return bookPropertyElm;
 }
 
-// TODO: For the modal, I need to figure out how to hide it & cancel the add
-// TODO:  if the user clicks anywhere that ISN'T the modal card...
+// TODO: Add to Modal a close window button
 function formItem(label, name, type, isRequired) {
   const newFormItem = document.createElement('div');
   newFormItem.classList.add('form-item');
@@ -125,11 +124,20 @@ function formItem(label, name, type, isRequired) {
 // I don't want to be calling DOM methods directly from 'normal' JS,
 // especially because it will probably require more logic than this
 function addLibraryToDOM() {
-  library.forEach(book => bookContainer.appendChild(bookElement(book)));
+  library.forEach(book => bookCntr.appendChild(bookElement(book)));
 }
 
 function addBookToDom(book) {
-  bookContainer.appendChild(bookElement(book));
+  bookCntr.appendChild(bookElement(book));
 }
 
-initPage();
+// Add Event Listeners
+// TODO: BUTTONS SHOULD HAVE EITHER A CLASS OR DATA ATTRIBUTE THAT DEFINES THEIR
+// TODO: ...CONTEXT. This way, I can check a global context var, and only trigger
+// TODO: their click event if the global context matches *their* context
+// (eg, if I'm in the "add book" modal context, buttons in the "home" context shouldn't be clickable)
+document.querySelector('.add-book-btn').addEventListener('click', () => {
+  modalAddBookCntr.classList.toggle('hidden');
+});
+
+initModalAddBook();

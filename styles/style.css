@@ -62,10 +62,9 @@ footer {
 }
 
 /* * MODAL */
-.modal {
-  /* display:none; */
+.modal-bg {
   position:fixed;
-  z-index:1;
+  z-index:10;
   left:0;
   top:0;
   width:100%;
@@ -73,10 +72,22 @@ footer {
   overflow:auto;
   background-color:rgba(0,0,0,.2);
 }
-.add-book {
-  position: relative;
+
+/* Attaching a "hidden" class to a modal allows me to simply toggle the class,
+   instead of messing with the modal's style attributes */
+.hidden {
+  display:none;
+}
+
+.modal {
+  /* 'classic' CSS-Tricks method for centering */
+  z-index: 11;
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  box-sizing:border-box;/* default behavior makes width & padding conflict */
   width:fit-content;
-  margin:15% auto;
   padding: 15px;
 
   font-size: 150%;
