@@ -13,7 +13,7 @@ This project is centered around learning how to implement OOP concepts in JavaSc
     function Book() { ... } // Constructor
     function addBookToLibrary() { ... } // Take input, call constructor, add to myLibrary
   ```
-3. Add function to loop through array and display each book on the page.
+3. ~~Add function to loop through array and display each book on the page.~~
 4. Add "NEW BOOK" button, which should pull up a form for:
     - Author
     - Title

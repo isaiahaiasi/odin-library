@@ -45,8 +45,13 @@ function getNewBookPrompt() {
 }
 
 // * DOM
+bookContainer = document.querySelector('.library');
 
-// Element generator
+// Add Event Listeners
+
+document.querySelector('.add-book').addEventListener('click', addBookToLibrary);
+
+// Book Element generator
 function bookElement(book) {
   const bookElement = document.createElement('div');
   
@@ -61,8 +66,6 @@ function bookElement(book) {
 
   return bookElement;
 }
-
-bookContainer = document.querySelector('.library');
 
 function addLibraryToDOM() {
   library.forEach(book => bookContainer.appendChild(bookElement(book)));
