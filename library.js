@@ -3,9 +3,12 @@
 // array: simpler, ?...
 const library = new Map();
 
-function Book(title, author) {
+function Book(title, author, pageCount, isRead, rating) {
   this.title = title;
   this.author = author;
+  this.pageCount = pageCount;
+  this.isRead = isRead;
+  this.rating = rating;
 }
 Book.prototype.info = function() {
   return `${this.title} by ${this.author}`;
@@ -31,6 +34,7 @@ function addBookToLibrary() {
   if (Book.length === constructorInputs.length) {
     const newBook = new Book(...constructorInputs);
     library.set(newBook.title, newBook);
+    addBookToDom(newBook);
     return true;
   } else {
     // Throw an error
@@ -39,34 +43,51 @@ function addBookToLibrary() {
 }
 
 function getNewBookPrompt() {
-  const title = prompt('What is the book\'s title?');
-  const author = prompt('Who is the book\'s author?');
-  return [title, author];
+  const newProps = [];
+  newProps.push(prompt('What is the book\'s title?'));
+  newProps.push(prompt('Who is the author?'));
+  newProps.push(prompt('How many pages long is it?'));
+  newProps.push(prompt('Have you read it?'));
+  newProps.push(prompt('What is it\'s rating?'));
+  return newProps;
 }
 
 // * DOM
-bookContainer = document.querySelector('.library');
+const bookContainer = document.querySelector('.library');
 
 // Add Event Listeners
-
 document.querySelector('.add-book').addEventListener('click', addBookToLibrary);
 
-// Book Element generator
+// Element generators
 function bookElement(book) {
-  const bookElement = document.createElement('div');
-  
-  const titleElement = document.createElement('div');
-  titleElement.textContent = `Title: ${book.title}`;
-  bookElement.appendChild(titleElement);
-  const authorElement = document.createElement('div');
-  authorElement.textContent = `Author: ${book.author}`;
-  bookElement.appendChild(authorElement);
+  const bookElm = document.createElement('div');
 
-  bookElement.classList.add('book');
+  // Once the model is more finalized, I probably won't be able to just do this
+  // (eg, 'rating' will require a very different approach)
+  Object.getOwnPropertyNames(book).forEach((prop) => {
+    bookElm.appendChild(bookPropertyElement(book, prop));
+  });
 
-  return bookElement;
+  bookElm.classList.add('book');
+  bookElm.setAttribute('data-booktitle',book.title);
+
+  return bookElm;
 }
 
+function bookPropertyElement(book, property) {
+  const bookPropertyElm = document.createElement('div');
+  bookPropertyElm.textContent = book[property];
+  bookPropertyElm.classList.add('book-prop');
+  bookPropertyElm.classList.add(`book-${property}`);
+  return bookPropertyElm;
+}
+
+// I don't want to be calling DOM methods directly from 'normal' JS,
+// especially because it will probably require more logic than this
 function addLibraryToDOM() {
   library.forEach(book => bookContainer.appendChild(bookElement(book)));
+}
+
+function addBookToDom(book) {
+  bookContainer.appendChild(bookElement(book));
 }
