@@ -66,8 +66,10 @@ function initModalAddBook() {
   modalForm.appendChild(formItem('Author:','author','text',true));
   modalForm.appendChild(formItem('Page count:','pageCount','number',true));
   modalForm.appendChild(formItem('Have read:','isRead','checkbox',true));
-  modalForm.appendChild(formItem('Have read:','isRead','checkbox',true));
-  modalForm.appendChild(formItem('','Add book!','submit',false));
+  modalForm.appendChild(formItem('Rating:','rating','range',true));
+  const modalFormSubmitButton = formItem('','Add book!','submit',false);
+  // TODO: add click eventlistener
+  modalForm.appendChild(modalFormSubmitButton);
 }
 
 // Element generators
