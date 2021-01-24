@@ -54,13 +54,18 @@ const bookCntr = document.querySelector('.library');
 const modalAddBookCntr = document.querySelector('#modal-container-addbook');
 
 // Add any generated HTML to the page (ie, the form fields...)
+// TODO: Add to Modal a close window button
 function initModalAddBook() {
   // Add bg
   // const modalBG = document.createElement('div');
   // modalBG.classList.add('modal-bg');
   // modalAddBookCntr.appendChild(modalBG);
 
-  // Add form elements
+  // ADD FORM ELEMENTS
+  modalAddBookCntr.querySelector('.modal').appendChild(closeButton(() => {
+    modalAddBookCntr.classList.toggle('hidden');
+  }));
+
   const modalForm = modalAddBookCntr.querySelector('form');
   modalForm.appendChild(formItem('Title:','title','text',true));
   modalForm.appendChild(formItem('Author:','author','text',true));
@@ -72,7 +77,7 @@ function initModalAddBook() {
   modalForm.appendChild(modalFormSubmitButton);
 }
 
-// Element generators
+// * Element generators
 function bookElement(book) {
   const bookElm = document.createElement('div');
 
@@ -98,7 +103,6 @@ function bookPropertyElement(book, property) {
   return bookPropertyElm;
 }
 
-// TODO: Add to Modal a close window button
 function formItem(label, name, type, isRequired) {
   const newFormItem = document.createElement('div');
   newFormItem.classList.add('form-item');
@@ -121,6 +125,13 @@ function formItem(label, name, type, isRequired) {
   newFormItem.appendChild(formInput);
 
   return newFormItem;
+}
+
+function closeButton(func) {
+  const closeBtn = document.createElement('div');
+  closeBtn.classList.add('close-btn');
+  closeBtn.addEventListener('click', func)
+  return closeBtn;
 }
 
 // I don't want to be calling DOM methods directly from 'normal' JS,

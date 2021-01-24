@@ -1,8 +1,8 @@
 :root {
   --col-accent: #990303;
-  --col-mid1: #9c9999;
-  --col-mid2: #71706e;
-  --col-bg: #292323;
+  --col-mid1: #ffffff;
+  --col-mid2: #659ab3;
+  --col-bg: #427597;
   --col-darkest: #000;
   --col-light: #ffffff;
 
@@ -36,9 +36,17 @@ main {
   color: var(--col-darkest);
 }
 
+form {
+  margin:1em;
+}
+
 footer {
   position:absolute;
   bottom:0;
+}
+
+a:visited {
+  color:var(--col-light);
 }
 
 .center-children {
@@ -55,10 +63,9 @@ footer {
   color: var(--col-darkest);
   margin: var(--card-scale);
   padding: var(--card-scale);
-  background-color: var(--col-mid1);
-  border: 1px solid var(--col-bg);
+  background: var(--col-mid1);
   border-radius: var(--card-scale);
-  box-shadow: 3px 3px var(--card-scale) var(--col-bg);
+  box-shadow: 1.5px 1.5px calc(var(--card-scale) * .7) var(--col-bg);
 }
 
 /* * MODAL */
@@ -89,8 +96,34 @@ footer {
   box-sizing:border-box;/* default behavior makes width & padding conflict */
   width:fit-content;
   padding: 15px;
+  margin: 0;
 
   font-size: 150%;
+}
+
+.modal > p {
+  padding-right:2em;
+}
+
+.close-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 1.5em;
+  height: 1.5em;
+  margin:.3em;
+  background: red;
+  border-radius:50%;
+}
+
+.close-btn:hover {
+  background:rgb(255, 93, 142);
+  transform:rotate(90deg);
+  transition:.3s;
+}
+
+.close-btn::after {
+  content: url(../imgs/x-icon.svg);
 }
 
 /*  TODO: create a separate JS file that adds this class to everything
