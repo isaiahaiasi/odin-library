@@ -72,8 +72,11 @@ function initModalAddBook() {
   modalForm.appendChild(formItem('Page count:','pageCount','number',true));
   modalForm.appendChild(formItem('Have read:','isRead','checkbox',true));
   modalForm.appendChild(formItem('Rating:','rating','range',true));
+  
   const modalFormSubmitButton = formItem('','Add book!','submit',false);
-  // TODO: add click eventlistener
+  modalFormSubmitButton.addEventListener('click', () => {
+
+  });
   modalForm.appendChild(modalFormSubmitButton);
 }
 
@@ -81,10 +84,29 @@ function initModalAddBook() {
 function bookElement(book) {
   const bookElm = document.createElement('div');
 
-  // Once the model is more finalized, I probably won't be able to just do this
-  // (eg, 'rating' will require a very different approach)
-  Object.getOwnPropertyNames(book).forEach((prop) => {
-    bookElm.appendChild(bookPropertyElement(book, prop));
+  const bookTitle = bookPropertyElement(book, 'title');
+  const bookAuthor = bookPropertyElement(book, 'author');
+  const bookPageCount = bookPropertyElement(book, 'pageCount');
+  const bookIsRead = bookPropertyElement(book, 'isRead');
+  // TODO: 'rating' element will have to be generated differently
+  const bookRating = bookPropertyElement(book, 'rating');
+
+  const bookPropElms = [bookTitle, bookAuthor, bookPageCount, bookIsRead, bookRating];
+  bookPropElms.forEach(bookPropElm => {
+    bookElm.appendChild(bookPropElm);
+  });
+
+  const deleteBookBtn = closeButton(() => {
+    library.delete(book.title);
+    bookCntr.removeChild(bookElm);
+  });
+  deleteBookBtn.classList.add('hidden');
+  bookElm.appendChild(deleteBookBtn);
+
+  ['mouseenter','mouseleave'].forEach((cardEvent) => {
+    bookElm.addEventListener(cardEvent, () => {
+      deleteBookBtn.classList.toggle('hidden');
+    });
   });
 
   bookElm.classList.add('book');
@@ -117,10 +139,6 @@ function formItem(label, name, type, isRequired) {
   formInput.setAttribute('id', `form-${name}`);
   formInput.required = isRequired;
 
-  if (type === 'submit') {
-    formInput.value=name;
-  }
-
   newFormItem.appendChild(formLabel);
   newFormItem.appendChild(formInput);
 
@@ -134,8 +152,6 @@ function closeButton(func) {
   return closeBtn;
 }
 
-// I don't want to be calling DOM methods directly from 'normal' JS,
-// especially because it will probably require more logic than this
 function addLibraryToDOM() {
   library.forEach(book => bookCntr.appendChild(bookElement(book)));
 }
@@ -154,3 +170,4 @@ document.querySelector('.add-book-btn').addEventListener('click', () => {
 });
 
 initModalAddBook();
+addLibraryToDOM();
