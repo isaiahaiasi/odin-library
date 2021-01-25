@@ -55,8 +55,11 @@ a:visited {
 }
 
 .library {
+  /* TODO: instead of a grid, this should probably be a flex container
+     TODO: & the width of the books should be set
+  */
   display:grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .card {

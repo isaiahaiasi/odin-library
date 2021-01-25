@@ -49,12 +49,11 @@ function getNewBookPrompt() {
   return newProps;
 }
 
-// * DOM
+// * === DOM === *
 const bookCntr = document.querySelector('.library');
 const modalAddBookCntr = document.querySelector('#modal-container-addbook');
 
-// Add any generated HTML to the page (ie, the form fields...)
-// TODO: Add to Modal a close window button
+// * Element generators
 function initModalAddBook() {
   // Add bg
   // const modalBG = document.createElement('div');
@@ -67,20 +66,36 @@ function initModalAddBook() {
   }));
 
   const modalForm = modalAddBookCntr.querySelector('form');
-  modalForm.appendChild(formItem('Title:','title','text',true));
-  modalForm.appendChild(formItem('Author:','author','text',true));
-  modalForm.appendChild(formItem('Page count:','pageCount','number',true));
-  modalForm.appendChild(formItem('Have read:','isRead','checkbox',true));
-  modalForm.appendChild(formItem('Rating:','rating','range',true));
-  
-  const modalFormSubmitButton = formItem('','Add book!','submit',false);
-  modalFormSubmitButton.addEventListener('click', () => {
 
+  const formItems = [];
+  formItems.push(formItem('Title:','title','text',true));
+  formItems.push(formItem('Author:','author','text',true));
+  formItems.push(formItem('Page count:','pageCount','number',true));
+  formItems.push(formItem('Have read:','isRead','checkbox',true));
+
+  formItems.forEach(item => { modalForm.appendChild(item)});
+  
+  const modalFormSubmitButton = formItem('','Add book!','button',false);
+  modalFormSubmitButton.addEventListener('click', () => {
+    const bookArgs = [];
+    formItems.forEach(item => {
+      const itemInputElm = item.querySelector('input');
+      bookArgs.push(itemInputElm.type === 'checkbox' ?
+        itemInputElm.checked :
+        itemInputElm.value
+      );
+      itemInputElm.value = '';
+      itemInputElm.checked = false;
+    });
+    const book = new Book(...bookArgs);
+    library.set(book.title, book);
+    addBookToDom(book);
+    modalAddBookCntr.classList.toggle('hidden');
   });
+
   modalForm.appendChild(modalFormSubmitButton);
 }
 
-// * Element generators
 function bookElement(book) {
   const bookElm = document.createElement('div');
 
@@ -88,10 +103,8 @@ function bookElement(book) {
   const bookAuthor = bookPropertyElement(book, 'author');
   const bookPageCount = bookPropertyElement(book, 'pageCount');
   const bookIsRead = bookPropertyElement(book, 'isRead');
-  // TODO: 'rating' element will have to be generated differently
-  const bookRating = bookPropertyElement(book, 'rating');
 
-  const bookPropElms = [bookTitle, bookAuthor, bookPageCount, bookIsRead, bookRating];
+  const bookPropElms = [bookTitle, bookAuthor, bookPageCount, bookIsRead];
   bookPropElms.forEach(bookPropElm => {
     bookElm.appendChild(bookPropElm);
   });
