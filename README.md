@@ -11,6 +11,6 @@ This project is centered around learning how to implement OOP concepts in JavaSc
 4. ~~Add "NEW BOOK" button, which should pull up a form to fill its attributes~~
 5. ~~Add button on each book's display to remove from library.~~
     - ~~Obviously this will require associating the particular DOM element with the particular book. A solution is to add a data-attribute with the array index.~~
-6. Add button on each book's display to change it's `read` status.
-    - This should be a method on the Book's prototype instance
+6. ~~Add button on each book's display to change it's `read` status.~~
+    - ~~This should be a method on the Book's prototype instance~~ (not sure why, but I made a setter anyway for practice)
 7. **Extra Credit**: Use either LocalStorage or an online DB service (they recommend Firebase for this) to add persistence, so the data is preserved if the user leaves and comes back.
