@@ -38,6 +38,7 @@ function addBookToLibraryFromBtn() {
     return true;
   } else {
     // Throw an error
+    console.log('ERROR trying to add book to library--wrong number of inputs.');
     return false;
   }
 }
@@ -110,8 +111,11 @@ function getBookElm(book) {
   
   const bookIsRead = getSlider('is read:', 'isRead', book.isRead);
   bookIsRead.addEventListener('change',() => {
-    console.log(`checked status: ${bookIsRead.querySelector('input').checked}`);
-    library.get(book.title).setIsRead(bookIsRead.querySelector('input').checked);
+    const status = bookIsRead.querySelector('input').checked;
+    console.log(`checked status: ${status}`);
+    library.get(book.title).setIsRead(status);
+    bookIsRead.querySelector('.switch-label').textContent = status ? 
+        'Have read' : 'Haven\'t read';
   });
 
   const bookPropElms = [bookTitle, bookAuthor, bookPageCount, bookIsRead];
@@ -171,7 +175,11 @@ function getFormItem(label, name, type, isRequired) {
 function getSlider(label, name, isChecked) {
   const inputElm = document.createElement('label');
   inputElm.classList.add('switch');
-  inputElm.textContent = label;
+
+  const textElm = document.createElement('span');
+  textElm.textContent = label;
+  textElm.classList.add('switch-label');
+  inputElm.appendChild(textElm);
   
   const inputCheckbox = document.createElement('input');
   inputCheckbox.type = 'checkbox';
