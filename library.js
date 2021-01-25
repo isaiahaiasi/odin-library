@@ -114,8 +114,11 @@ function getBookElm(book) {
     const status = bookIsRead.querySelector('input').checked;
     console.log(`checked status: ${status}`);
     library.get(book.title).setIsRead(status);
-    bookIsRead.querySelector('.switch-label').textContent = status ? 
-        'Have read' : 'Haven\'t read';
+    if (status) {
+      bookElm.classList.add('semi-transparent');
+    } else {
+      bookElm.classList.remove('semi-transparent');
+    }
   });
 
   const bookPropElms = [bookTitle, bookAuthor, bookPageCount, bookIsRead];
@@ -138,6 +141,9 @@ function getBookElm(book) {
 
   bookElm.classList.add('book');
   bookElm.classList.add('card');
+  if (book.isRead) {
+    bookElm.classList.add('semi-transparent');
+  }
   bookElm.setAttribute('data-booktitle',book.title);
 
   return bookElm;
