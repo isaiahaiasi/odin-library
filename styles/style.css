@@ -1,8 +1,8 @@
 :root {
   --col-accent: #990303;
-  --col-mid1: #ffffff;
-  --col-mid2: #659ab3;
-  --col-bg: #427597;
+  --col-base-light: #c5edff;
+  --col-base-mid: #93bfd3;
+  --col-base-dark: #427597;
   --col-darkest: #000;
   --col-light: #ffffff;
 
@@ -10,10 +10,10 @@
 }
 
 html,body {
-  width:100%;
+  /* width:100%;
   height:100%;
-  box-sizing:border-box;
-  background-color: var(--col-bg);
+  box-sizing:border-box; */
+  background-color: var(--col-base-dark);
   color:var(--col-light);
 }
 
@@ -32,7 +32,7 @@ main {
   flex-direction:column;
   align-items:space-between;
 
-  background-color: var(--col-mid2);
+  background-color: var(--col-base-mid);
   color: var(--col-darkest);
 }
 
@@ -54,10 +54,14 @@ a:visited {
   justify-content: center;
 }
 
+.hidden {
+  display:none;
+}
+
 .library {
   /* TODO: instead of a grid, this should probably be a flex container
-     TODO: & the width of the books should be set
-  */
+     TODO: & the width of the books should be set.
+     ... OR, just make it a full-length bar... */
   display:grid;
   grid-template-columns: 1fr 1fr 1fr;
 }
@@ -67,9 +71,9 @@ a:visited {
   color: var(--col-darkest);
   margin: var(--card-scale);
   padding: var(--card-scale);
-  background: var(--col-mid1);
+  background: var(--col-light);
   border-radius: var(--card-scale);
-  box-shadow: 1.5px 1.5px calc(var(--card-scale) * .7) var(--col-bg);
+  box-shadow: 1.5px 1.5px calc(var(--card-scale) * .7) var(--col-base-dark);
 }
 
 /* * MODAL */
@@ -84,19 +88,14 @@ a:visited {
   background-color:rgba(0,0,0,.2);
 }
 
-/* Attaching a "hidden" class to a modal allows me to simply toggle the class,
-   instead of messing with the modal's style attributes */
-.hidden {
-  display:none;
-}
-
 .modal {
-  /* 'classic' CSS-Tricks method for centering */
+  /* center */
   z-index: 11;
   position:fixed;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
+
   box-sizing:border-box;/* default behavior makes width & padding conflict */
   width:fit-content;
   padding: 15px;
@@ -118,6 +117,8 @@ a:visited {
   margin:.3em;
   background: red;
   border-radius:50%;
+  content: url(../imgs/x-icon.svg);
+  user-select:none;
 }
 
 .close-btn:hover {
@@ -126,17 +127,34 @@ a:visited {
   transition:.3s;
 }
 
-.close-btn::after {
-  content: url(../imgs/x-icon.svg);
+.switch {
+  position:relative;
+  display:inline-block;
+}
+.switch input {
+  display:none;
 }
 
-/*  TODO: create a separate JS file that adds this class to everything
-    - Then, include that script as a separate link in html,
-    and I can just comment it out when I don't want it!
-    - I could even include some sort of html flags to specify the scope
-    of what I want to add it to. */
-.debug-viz {
-  /* Colors could be randomized (or coded) to distinguish elements */
-  background-color:rgba(124, 124, 124, 0.493);
-  border: 1px solid red;
+.switch-span {
+  position:absolute;
+  background:var(--col-base-dark);
+  width:1.7em;
+  height:1em;
+  border-radius:.5em;
+}
+
+.switch-span::before {
+  position:absolute;
+  box-sizing:border-box;
+  content:"";
+  height: 1em;
+  width: 1em;
+  border: .15em solid var(--col-base-dark);
+  border-radius:50%;
+  background:var(--col-base-light);
+  transition: .1s;
+}
+
+input:checked + .switch-span::before {
+  transform:translateX(.7em);
 }

@@ -2,7 +2,7 @@
 // (book dom element finding its entry in map to delete, toggle isRead, etc)
 const library = new Map();
 
-function Book(title, author, pageCount, isRead, rating) {
+function Book(title, author, pageCount, isRead) {
   this.title = title;
   this.author = author;
   this.pageCount = pageCount;
@@ -10,7 +10,10 @@ function Book(title, author, pageCount, isRead, rating) {
 }
 Book.prototype.info = function() {
   return `${this.title} by ${this.author}`;
-}
+};
+Book.prototype.setIsRead = function(b) {
+  this.isRead = b;
+};
 
 // !TEMP FOR TESTING!
 const testBooks = [
@@ -25,8 +28,7 @@ const testBooks = [
 testBooks.forEach(book => library.set(book.title, book));
 // !ENDTEMP!
 
-function addBookToLibrary() {
-  // Take input for each constructor field & push to inputs array
+function addBookToLibraryFromBtn() {
   const constructorInputs = getNewBookPrompt();
 
   if (Book.length === constructorInputs.length) {
@@ -54,28 +56,31 @@ const bookCntr = document.querySelector('.library');
 const modalAddBookCntr = document.querySelector('#modal-container-addbook');
 
 // * Element generators
+
 function initModalAddBook() {
   // Add bg
-  // const modalBG = document.createElement('div');
-  // modalBG.classList.add('modal-bg');
-  // modalAddBookCntr.appendChild(modalBG);
+  const modalBG = document.createElement('div');
+  modalBG.classList.add('modal-bg');
+  modalAddBookCntr.appendChild(modalBG);
 
   // ADD FORM ELEMENTS
-  modalAddBookCntr.querySelector('.modal').appendChild(closeButton(() => {
+  modalAddBookCntr.querySelector('.modal').appendChild(getCloseButton(() => {
     modalAddBookCntr.classList.toggle('hidden');
   }));
 
   const modalForm = modalAddBookCntr.querySelector('form');
 
   const formItems = [];
-  formItems.push(formItem('Title:','title','text',true));
-  formItems.push(formItem('Author:','author','text',true));
-  formItems.push(formItem('Page count:','pageCount','number',true));
-  formItems.push(formItem('Have read:','isRead','checkbox',true));
+  formItems.push(getFormItem('Title:','title','text',true));
+  formItems.push(getFormItem('Author:','author','text',true));
+  formItems.push(getFormItem('Page count:','pageCount','number',true));
+  
+  const formItemSlider = getSlider('Have read:','isRead', false);
+  formItems.push(formItemSlider);
 
   formItems.forEach(item => { modalForm.appendChild(item)});
   
-  const modalFormSubmitButton = formItem('','Add book!','button',false);
+  const modalFormSubmitButton = getFormItem('','Add book!','button',false);
   modalFormSubmitButton.addEventListener('click', () => {
     const bookArgs = [];
     formItems.forEach(item => {
@@ -96,26 +101,31 @@ function initModalAddBook() {
   modalForm.appendChild(modalFormSubmitButton);
 }
 
-function bookElement(book) {
+function getBookElm(book) {
   const bookElm = document.createElement('div');
 
-  const bookTitle = bookPropertyElement(book, 'title');
-  const bookAuthor = bookPropertyElement(book, 'author');
-  const bookPageCount = bookPropertyElement(book, 'pageCount');
-  const bookIsRead = bookPropertyElement(book, 'isRead');
+  const bookTitle = getBookPropertyElm(book, 'title');
+  const bookAuthor = getBookPropertyElm(book, 'author');
+  const bookPageCount = getBookPropertyElm(book, 'pageCount');
+  
+  const bookIsRead = getSlider('is read:', 'isRead', book.isRead);
+  bookIsRead.addEventListener('change',() => {
+    console.log(`checked status: ${bookIsRead.querySelector('input').checked}`);
+    library.get(book.title).setIsRead(bookIsRead.querySelector('input').checked);
+  });
 
   const bookPropElms = [bookTitle, bookAuthor, bookPageCount, bookIsRead];
   bookPropElms.forEach(bookPropElm => {
     bookElm.appendChild(bookPropElm);
   });
 
-  const deleteBookBtn = closeButton(() => {
+  const deleteBookBtn = getCloseButton(() => {
     library.delete(book.title);
     bookCntr.removeChild(bookElm);
   });
   deleteBookBtn.classList.add('hidden');
   bookElm.appendChild(deleteBookBtn);
-
+  
   ['mouseenter','mouseleave'].forEach((cardEvent) => {
     bookElm.addEventListener(cardEvent, () => {
       deleteBookBtn.classList.toggle('hidden');
@@ -129,7 +139,7 @@ function bookElement(book) {
   return bookElm;
 }
 
-function bookPropertyElement(book, property) {
+function getBookPropertyElm(book, property) {
   const bookPropertyElm = document.createElement('div');
   bookPropertyElm.textContent = book[property];
   bookPropertyElm.classList.add('book-prop');
@@ -138,7 +148,7 @@ function bookPropertyElement(book, property) {
   return bookPropertyElm;
 }
 
-function formItem(label, name, type, isRequired) {
+function getFormItem(label, name, type, isRequired) {
   const newFormItem = document.createElement('div');
   newFormItem.classList.add('form-item');
 
@@ -158,7 +168,24 @@ function formItem(label, name, type, isRequired) {
   return newFormItem;
 }
 
-function closeButton(func) {
+function getSlider(label, name, isChecked) {
+  const inputElm = document.createElement('label');
+  inputElm.classList.add('switch');
+  inputElm.textContent = label;
+  
+  const inputCheckbox = document.createElement('input');
+  inputCheckbox.type = 'checkbox';
+  inputCheckbox.name = name;
+  inputCheckbox.checked = isChecked;
+  inputElm.appendChild(inputCheckbox);
+  
+  const inputSpanElm = document.createElement('span');
+  inputSpanElm.classList.add('switch-span');
+  inputElm.appendChild(inputSpanElm);
+  return inputElm;
+}
+
+function getCloseButton(func) {
   const closeBtn = document.createElement('div');
   closeBtn.classList.add('close-btn');
   closeBtn.addEventListener('click', func)
@@ -166,18 +193,13 @@ function closeButton(func) {
 }
 
 function addLibraryToDOM() {
-  library.forEach(book => bookCntr.appendChild(bookElement(book)));
+  library.forEach(book => bookCntr.appendChild(getBookElm(book)));
 }
 
 function addBookToDom(book) {
-  bookCntr.appendChild(bookElement(book));
+  bookCntr.appendChild(getBookElm(book));
 }
 
-// Add Event Listeners
-// TODO: BUTTONS SHOULD HAVE EITHER A CLASS OR DATA ATTRIBUTE THAT DEFINES THEIR
-// TODO: ...CONTEXT. This way, I can check a global context var, and only trigger
-// TODO: their click event if the global context matches *their* context
-// (eg, if I'm in the "add book" modal context, buttons in the "home" context shouldn't be clickable)
 document.querySelector('.add-book-btn').addEventListener('click', () => {
   modalAddBookCntr.classList.toggle('hidden');
 });
