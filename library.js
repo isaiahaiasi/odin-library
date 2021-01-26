@@ -75,13 +75,18 @@ function initModalAddBook() {
   formItems.push(getFormItem('Title:','title','text',true));
   formItems.push(getFormItem('Author:','author','text',true));
   formItems.push(getFormItem('Page count:','pageCount','number',true));
-  
-  const formItemSlider = getSlider('Have read:','isRead', false);
+
+  const formItemSlider = document.createElement('div');
+  formItemSlider.classList.add('form-item');
+  formItemSlider.appendChild(getSwitch('Have read:','isRead', false));
   formItems.push(formItemSlider);
 
   formItems.forEach(item => { modalForm.appendChild(item)});
+
+  const modalFormSubmitButton = document.createElement('button');
+  modalFormSubmitButton.type = 'button';
+  modalFormSubmitButton.textContent += 'Add Book';
   
-  const modalFormSubmitButton = getFormItem('','Add book!','button',false);
   modalFormSubmitButton.addEventListener('click', () => {
     const bookArgs = [];
     formItems.forEach(item => {
@@ -93,6 +98,7 @@ function initModalAddBook() {
       itemInputElm.value = '';
       itemInputElm.checked = false;
     });
+
     const book = new Book(...bookArgs);
     library.set(book.title, book);
     addBookToDom(book);
@@ -109,7 +115,7 @@ function getBookElm(book) {
   const bookAuthor = getBookPropertyElm(book, 'author');
   const bookPageCount = getBookPropertyElm(book, 'pageCount');
   
-  const bookIsRead = getSlider('is read:', 'isRead', book.isRead);
+  const bookIsRead = getSwitch('is read:', 'isRead', book.isRead);
   bookIsRead.addEventListener('change',() => {
     const status = bookIsRead.querySelector('input').checked;
     console.log(`checked status: ${status}`);
@@ -169,7 +175,7 @@ function getFormItem(label, name, type, isRequired) {
   const formInput = document.createElement('input');
   formInput.setAttribute('type', type);
   formInput.setAttribute('name', name);
-  formInput.setAttribute('id', `form-${name}`);
+  // formInput.setAttribute('id', `form-${name}`);
   formInput.required = isRequired;
 
   newFormItem.appendChild(formLabel);
@@ -178,7 +184,7 @@ function getFormItem(label, name, type, isRequired) {
   return newFormItem;
 }
 
-function getSlider(label, name, isChecked) {
+function getSwitch(label, name, isChecked) {
   const inputElm = document.createElement('label');
   inputElm.classList.add('switch');
 
@@ -196,6 +202,7 @@ function getSlider(label, name, isChecked) {
   const inputSpanElm = document.createElement('span');
   inputSpanElm.classList.add('switch-span');
   inputElm.appendChild(inputSpanElm);
+  
   return inputElm;
 }
 

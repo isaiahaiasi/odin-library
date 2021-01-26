@@ -6,6 +6,8 @@
   --col-base-dark: #427597;
   --col-darkest: #000;
   --col-light: #ffffff;
+  --col-btn-light: rgb(30, 138, 201);
+  --col-btn-mid: rgb(23, 89, 175);
 
   --card-scale: .3em;
 }
@@ -17,6 +19,8 @@ body {
   box-sizing:border-box;
   min-height:100%;
   max-height:fit-content;
+  max-width:900px;
+  margin:auto;
   background-color: var(--col-base-dark);
   color:var(--col-light);
   display:flex;
@@ -27,6 +31,18 @@ h1 {
   padding:10px;
   font-weight: 700;
   font-size: 2em;
+  text-shadow:2px 2px 4px  rgb(2, 44, 99);
+}
+
+h1::after {
+  display:block;
+  content:'';
+  margin-top:.2em;
+  border-bottom:1px solid white;
+}
+
+h2 {
+  font-weight:bold;
 }
 
 main.card {
@@ -46,10 +62,31 @@ main.card {
 footer {
   position: absolute;
   bottom:0;
+  padding:.5em;
 }
 
 form {
-  margin:1em;
+  margin:.5em;
+}
+
+button {
+  appearance:none;
+  display:block;
+  margin:.3em;
+  padding:.3em .6em;
+  border:none;
+  font-size:1.2em;
+  color:var(--col-light);
+  border-bottom: 4px solid var(--col-btn-mid);
+  border-radius: 5px;
+  background:var(--col-btn-light);
+}
+
+button:focus {
+  outline:none;
+  border:none;
+  border-top: 4px solid var(--col-btn-mid);
+  background:var(--col-btn-mid);
 }
 
 a:visited {
@@ -96,6 +133,16 @@ a:visited {
 
 .book-prop {
   margin-right:2em;
+  padding:.3em 0;
+}
+
+.book-prop.book-title {
+  font-weight:bold;
+}
+.book-prop.book-title::after {
+  content:"";
+  display:block;
+  border-top: solid 1px var(--col-base-dark); 
 }
 
 /* * MODAL */
@@ -120,7 +167,9 @@ a:visited {
 
   box-sizing:border-box;/* default behavior makes width & padding conflict */
   width:fit-content;
-  padding: 15px;
+  max-width:95%;
+  padding: .7em;
+  padding-bottom:0;
   margin: 0;
 
   font-size: 150%;
@@ -134,6 +183,18 @@ a:visited {
   display: flex;
   justify-content: space-between;
   margin: 1em;
+}
+
+.form-item > label {
+  padding-right:.4em;
+}
+
+.book-prop.book-author::before {
+  font-style:italic;
+  content:'by ';
+}
+.book-prop.book-pageCount::after {
+  content:' pages';
 }
 
 .close-btn {
@@ -157,7 +218,8 @@ a:visited {
 
 .switch {
   position:relative;
-  display:inline-block;
+  display:flex;
+  align-items:center;
 }
 
 .switch input {
@@ -168,7 +230,6 @@ a:visited {
   padding-right: 1em;
 }
 .switch-span {
-  position:absolute;
   background:var(--col-base-dark);
   width:1.7em;
   height:1em;
@@ -197,15 +258,35 @@ input:checked + .switch-span {
   background: green;
 }
 
-@media (min-width:430px) {
+@media (min-width:35em) {
+  h1 {
+    font-size:4em;
+  }
   .book {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
   .card.library-header {
     display:grid;
+    font-weight: bold;
   }
   .close-btn {
-    top: -4px;
+    top: 0;
+  }
+
+  .book-prop.book-author::before {
+    content:'';
+  }
+
+  .book-prop.book-pageCount::after {
+    content:'';
+  }
+
+  .book-prop.book-title {
+    font-weight:normal;
+  }
+
+  .book-prop.book-title::after {
+    display:none; 
   }
 }
