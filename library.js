@@ -8,9 +8,6 @@ function Book(title, author, pageCount, isRead) {
   this.pageCount = pageCount;
   this.isRead = isRead;
 }
-Book.prototype.info = function() {
-  return `${this.title} by ${this.author}`;
-};
 Book.prototype.setIsRead = function(b) {
   this.isRead = b;
 };
@@ -59,44 +56,19 @@ const modalAddBookCntr = document.querySelector('#modal-container-addbook');
 // * Element generators
 
 function initModalAddBook() {
-  // Add bg
-  const modalBG = document.createElement('div');
-  modalBG.classList.add('modal-bg');
-  modalAddBookCntr.appendChild(modalBG);
-
   // ADD FORM ELEMENTS
   modalAddBookCntr.querySelector('.modal').appendChild(getCloseButton(() => {
-    modalAddBookCntr.classList.toggle('hidden');
+    modalAddBookCntr.classList.add('hidden');
   }));
 
-  const modalForm = modalAddBookCntr.querySelector('form');
-
-  const formItems = [];
-  formItems.push(getFormItem('Title:','title','text',true));
-  formItems.push(getFormItem('Author:','author','text',true));
-  formItems.push(getFormItem('Page count:','pageCount','number',true));
-
-  const formItemSlider = document.createElement('div');
-  formItemSlider.classList.add('form-item');
-  formItemSlider.appendChild(getSwitch('Have read:','isRead', false));
-  formItems.push(formItemSlider);
-
-  formItems.forEach(item => { modalForm.appendChild(item)});
-
-  const modalFormSubmitButton = document.createElement('button');
-  modalFormSubmitButton.type = 'button';
-  modalFormSubmitButton.textContent += 'Add Book';
+  const modalFormBtn = modalAddBookCntr.querySelector('form').querySelector('button');
   
-  modalFormSubmitButton.addEventListener('click', () => {
+  modalFormBtn.addEventListener('click', () => {
     const bookArgs = [];
-    formItems.forEach(item => {
-      const itemInputElm = item.querySelector('input');
-      bookArgs.push(itemInputElm.type === 'checkbox' ?
-        itemInputElm.checked :
-        itemInputElm.value
-      );
-      itemInputElm.value = '';
-      itemInputElm.checked = false;
+    Array.from(modalAddBookCntr.querySelectorAll('input')).forEach(input => {
+      bookArgs.push(input.type === 'checkbox' ? input.checked : input.value);
+      input.value = '';
+      input.checked = false;
     });
 
     const book = new Book(...bookArgs);
@@ -104,8 +76,6 @@ function initModalAddBook() {
     addBookToDom(book);
     modalAddBookCntr.classList.toggle('hidden');
   });
-
-  modalForm.appendChild(modalFormSubmitButton);
 }
 
 function getBookElm(book) {
@@ -162,26 +132,6 @@ function getBookPropertyElm(book, property) {
   bookPropertyElm.classList.add(`book-${property}`);
 
   return bookPropertyElm;
-}
-
-function getFormItem(label, name, type, isRequired) {
-  const newFormItem = document.createElement('div');
-  newFormItem.classList.add('form-item');
-
-  const formLabel = document.createElement('label');
-  formLabel.textContent = label;
-  formLabel.setAttribute('for', name);
-
-  const formInput = document.createElement('input');
-  formInput.setAttribute('type', type);
-  formInput.setAttribute('name', name);
-  // formInput.setAttribute('id', `form-${name}`);
-  formInput.required = isRequired;
-
-  newFormItem.appendChild(formLabel);
-  newFormItem.appendChild(formInput);
-
-  return newFormItem;
 }
 
 function getSwitch(label, name, isChecked) {
