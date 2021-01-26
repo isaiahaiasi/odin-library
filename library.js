@@ -25,6 +25,10 @@ function initModalAddBook() {
   // ADD FORM ELEMENTS
   modalAddBookCntr.querySelector('.modal').appendChild(getCloseButton(() => {
     modalAddBookCntr.classList.add('hidden');
+    Array.from(modalAddBookCntr.querySelectorAll('input')).forEach(input => {
+      input.value = '';
+      input.checked = false;
+    });
   }));
 
   const modalFormBtn = modalAddBookCntr.querySelector('form').querySelector('button');
