@@ -22,7 +22,6 @@ const testBooks = [
   new Book('LOTR', 'JRR Tolkein', 600, true),
 ];
 
-testBooks.forEach(book => library.set(book.title, book));
 // !ENDTEMP!
 
 // * === DOM === *
@@ -60,6 +59,7 @@ function initModalAddBook() {
     library.set(book.title, book);
     bookCntr.appendChild(getBookElm(book));
     modalAddBookCntr.classList.toggle('hidden');
+    updateFooterData();
   });
 }
 
@@ -217,6 +217,24 @@ document.querySelector('.add-book-btn').addEventListener('click', () => {
   modalAddBookCntr.classList.toggle('hidden');
 });
 
+// TODO: Fix this, starting with... sigh... replacing Map() with []...
+function saveLibrary() {
+  var libJSON = JSON.stringify(Array.from(library, ([key, value]) => value));
+  window.localStorage.setItem('libraryRecord', libJSON);
+}
+
+function loadLibrary() {
+  const libraryRecord = window.localStorage.getItem('libraryRecord');
+
+  if (!libraryRecord || libraryRecord == {}) {
+    testBooks.forEach(book => library.set(book.title, book));
+  } else {
+    JSON.parse(libraryRecord).forEach(book => library.set(book.title, book));
+  }
+
+  library.forEach(book => bookCntr.appendChild(getBookElm(book)));
+}
+
 initModalAddBook();
-library.forEach(book => bookCntr.appendChild(getBookElm(book)));
+loadLibrary();
 updateFooterData();
