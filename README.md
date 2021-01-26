@@ -20,7 +20,7 @@ I might have been wrong in my assumption that this project was mainly about lear
 
 ### Pitfalls:
 - Multiple times I was too clever for my own good.
-    - I thought it would be more efficient to use a Map instead of an Array for the library, but the lack of array functions meant I was constantly converting it back to an array. The potential benefit of using an array was almost nil anyway.
+    - I thought it would be more efficient to use a Map instead of an Array for the library, but the lack of array functions meant I was constantly converting it back to an array. The potential benefit of using a map was almost nil anyway.
     - My first pass at the modal "add book" form, it was almost entirely generated in JavaScript. This didn't serve any real purpose, as every attribute was hard-coded, and the ~20 lines of HTML took up almost 3 times as many lines of JS.
 - I tried to wing my layout, which made redesigning it a pain.
 
@@ -32,5 +32,5 @@ I might have been wrong in my assumption that this project was mainly about lear
 
 ### Things I wish I had done better, but it's time to move on:
 - I used custom styling/logic for my form validation, but the style of the pop up is pretty ugly.
-- I only briefly tested in FireFox, and there seems to be a weird bug with the form styling, where it shows a red border around it after validation fails once. Not sure why that is.
+- I only briefly tested in FireFox, and there seems to be a weird bug with the form styling, where it shows a permanent red border around it after validation fails once. Not sure why that is.
 - I wanted to add sorting, which would have been a relatively simple matter of adding onclick listeners to the table headings, assigning a function that sorts the library and then rebuilds the table in the new order. But other rabbit-holes took up a lot of time, and I think it's better at this point to just move on.
