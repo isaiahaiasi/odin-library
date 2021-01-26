@@ -25,9 +25,9 @@
         </div>
       </div>
       <div class='container-foot'>
-        Total books: <i id='total-books'>0</i>. 
-        Books read: <i id='books-read'>0</i>. 
-        Pages read: <i id='pages-read'>0</i>.
+        Total books: <b id='total-books'>0</b>.
+        Books read: <b id='books-read'>0</b>.
+        Pages read: <b id='pages-read'>0</b>.
       </div>
     </main>
     <footer>
@@ -41,20 +41,20 @@
           <h2>Enter a new book:</h2>
           <div class='form-item'>
             <label for='title'>Title:</label>
-            <input type='text' name='title' required>
+            <input type='text' name='title' id='title' required>
           </div>
           <div class='form-item'>
             <label for='author'>Author:</label>
-            <input type='text' name='author' required>
+            <input type='text' name='author' id='author' required>
           </div>
           <div class='form-item'>
             <label for='pageCount'>Page count:</label>
-            <input type='number' name='pageCount' required>
+            <input type='number' name='pageCount' id='pageCount' required>
           </div>
           <div class='form-item'>
             <label class='switch'>
               <span class='switch-label'>Have read:</span>
-              <input type='checkbox' name='isRead'>
+              <input type='checkbox' name='isRead' id='isRead'>
               <span class='switch-span'></span>
             </label>
           </div>

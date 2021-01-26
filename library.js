@@ -14,12 +14,12 @@ Book.prototype.setIsRead = function(b) {
 
 // !TEMP FOR TESTING!
 const testBooks = [
-  new Book('The Hobbit', 'Gandalf', 67, false, 0),
-  new Book('The Martian', 'Weir', 310, true, 4),
-  new Book('Pragmatic Programmer', 'Idk', 270, false, 3),
-  new Book('Clean Code', 'Avuncular Robert', 400, false, 2),
-  new Book('Name of the Wind', 'Pat Rothfuss', 800, true, 4),
-  new Book('LOTR', 'JRR Tolkein', 600, true, 4),
+  new Book('The Hobbit', 'Gandalf', 67, false),
+  new Book('The Martian', 'Weir', 310, true),
+  new Book('The Pragmatic Programmer', 'Andrew Hunt & Dave Thomas', 320, false),
+  new Book('Clean Code', 'Avuncular Robert', 400, false),
+  new Book('The DevOps Handbook', 'Gene Kim, et al.', 480, false),
+  new Book('LOTR', 'JRR Tolkein', 600, true),
 ];
 
 testBooks.forEach(book => library.set(book.title, book));
@@ -45,6 +45,10 @@ function initModalAddBook() {
   const modalFormBtn = modalAddBookCntr.querySelector('form').querySelector('button');
   
   modalFormBtn.addEventListener('click', () => {
+    if (!validateForm(modalAddBookCntr)) {
+      return;
+    }
+
     const bookArgs = [];
     Array.from(modalAddBookCntr.querySelectorAll('input')).forEach(input => {
       bookArgs.push(input.type === 'checkbox' ? input.checked : input.value);
@@ -145,7 +149,33 @@ function getCloseButton(func) {
   return closeBtn;
 }
 
-// LIBRARY STATS
+// * FORM VALIDATION
+function validateForm(formContainer) {
+  const inputs = formContainer.querySelectorAll('input[required]');
+
+  for (let i = 0; i < inputs.length; i++) {
+    if (inputs[i].value === '') {
+      // TODO: Fancy alert popup
+      console.log(`validation failed on input ${inputs[i].name}`);
+      validationFailDisplay(inputs[i],'Please fill out this field!', 1);
+      return false;
+    }
+    if (inputs[i].name='title' && library.get(inputs[i].value)) {
+      console.log(`validation failed on input ${inputs[i].name} (Can't have multiple books with the same title!)`);
+      validationFailDisplay(inputs[i], 'Title must be unique!', 1);
+      return false;
+    }
+    if (inputs[i].type === 'number' && inputs[i].value < 1) {
+      console.log(`validation failed on input ${inputs[i].name} (you can't have negative pages, silly!)`);
+      validationFailDisplay(inputs[i], 'Page count can\'t be negative!', 1);
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// * LIBRARY STATS
 function updateFooterData() {
   const libArray = Array.from(library, ([key, value]) => value);
   bookStats.totalBooks.textContent = library.size;
@@ -153,16 +183,32 @@ function updateFooterData() {
   bookStats.pagesRead.textContent = getPagesRead(libArray);
 }
 
+function validationFailDisplay(element, msg, decay) {
+  element.classList.remove('validation-failed');
+  window.clearTimeout(timeout);
+  element.classList.add('validation-failed');
+  element.style.animationDuration = decay + 's';
+  
+  const popup = document.createElement('div');
+  popup.classList.add('form-validation-error');
+  popup.textContent = msg;
+  element.parentElement.appendChild(popup);
+  window.setTimeout(timeout, decay * 1000);
+
+  function timeout() {
+    element.classList.remove('validation-failed');
+    popup.remove();
+  }
+}
+
 function getBooksRead(libArray) {
   return libArray.reduce((sum, book) => 
-    book.isRead ? ++sum : sum, 
-    0
+    book.isRead ? ++sum : sum, 0
   );
 }
 function getPagesRead(libArray) {
   return libArray.reduce((sum, book) => 
-    book.isRead ? sum + book.pageCount : sum, 
-    0
+    book.isRead ? sum + book.pageCount : sum, 0
   );
 }
 
