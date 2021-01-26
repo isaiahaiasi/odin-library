@@ -1,5 +1,4 @@
 :root {
-  --col-accent: #990303;
   --col-base-light: #c5edff;
   --col-base-mid: #93bfd3;
   --col-base-mid2: #729db1;
@@ -115,7 +114,6 @@ b {
   background: var(--col-light);
   border-radius: var(--card-scale);
   box-shadow: 1.5px 1.5px calc(var(--card-scale) * .7) var(--col-base-dark);
-  transition:var(--transition-speed);
 }
 
 .card.semi-transparent {
@@ -144,6 +142,12 @@ b {
   display:block;
   border-top: solid 1px var(--col-base-dark); 
 }
+.book-prop.book-author::before {
+  content:'by ';
+}
+.book-prop.book-pageCount::after {
+  content:' pages';
+}
 
 .container-foot {
   margin-left:.3em;
@@ -169,7 +173,7 @@ b {
   left:50%;
   transform:translate(-50%,-50%);
 
-  box-sizing:border-box;/* default behavior makes width & padding conflict */
+  box-sizing:border-box;
   width:fit-content;
   max-width:95%;
   padding: .7em;
@@ -192,14 +196,6 @@ b {
 
 .form-item > label {
   padding-right:.4em;
-}
-
-.book-prop.book-author::before {
-  font-style:italic;
-  content:'by ';
-}
-.book-prop.book-pageCount::after {
-  content:' pages';
 }
 
 .close-btn {
@@ -268,24 +264,22 @@ input[type='text'], input[type='number'] {
   border:1px solid var(--col-darkest);
   border-radius: 4px;
 }
+
 .validation-failed {
   background-color:red;
   animation-name: anim-fade;
   animation-duration: 3s;
 }
 
-.form-validation-error {
-  z-index:10;
-  display:block;
+.card.form-validation-error {
+  z-index:15;
   box-sizing:border-box;
   position:absolute;
-  top:1.3em;
-  width:100%;
-  text-align:right;
-  background:lightcoral;
-  border-radius:4px;
-  padding:.3em;
-  font-size:.8em;
+  top:1.6em;
+  right:0;
+  margin:0;
+  background:rgb(243, 174, 174);
+  font-size:.7em;
 }
 
 @keyframes anim-fade {

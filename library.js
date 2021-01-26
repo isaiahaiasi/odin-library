@@ -175,14 +175,6 @@ function validateForm(formContainer) {
   return true;
 }
 
-// * LIBRARY STATS
-function updateFooterData() {
-  const libArray = Array.from(library, ([key, value]) => value);
-  bookStats.totalBooks.textContent = library.size;
-  bookStats.booksRead.textContent = getBooksRead(libArray);
-  bookStats.pagesRead.textContent = getPagesRead(libArray);
-}
-
 function validationFailDisplay(element, msg, decay) {
   element.classList.remove('validation-failed');
   window.clearTimeout(timeout);
@@ -190,6 +182,7 @@ function validationFailDisplay(element, msg, decay) {
   element.style.animationDuration = decay + 's';
   
   const popup = document.createElement('div');
+  popup.classList.add('card');
   popup.classList.add('form-validation-error');
   popup.textContent = msg;
   element.parentElement.appendChild(popup);
@@ -201,14 +194,22 @@ function validationFailDisplay(element, msg, decay) {
   }
 }
 
+// * LIBRARY STATS
+function updateFooterData() {
+  const libArray = Array.from(library, ([key, value]) => value);
+  bookStats.totalBooks.textContent = library.size;
+  bookStats.booksRead.textContent = getBooksRead(libArray);
+  bookStats.pagesRead.textContent = getPagesRead(libArray);
+}
+
 function getBooksRead(libArray) {
-  return libArray.reduce((sum, book) => 
+  return libArray.reduce((sum, book) =>
     book.isRead ? ++sum : sum, 0
   );
 }
 function getPagesRead(libArray) {
-  return libArray.reduce((sum, book) => 
-    book.isRead ? sum + book.pageCount : sum, 0
+  return libArray.reduce((sum, book) =>
+    book.isRead ? sum + (+book.pageCount) : sum, 0
   );
 }
 
