@@ -1,6 +1,4 @@
-// Using a map instead of an array b/c main use will be getting a book by key
-// (book dom element finding its entry in map to delete, toggle isRead, etc)
-const library = new Map();
+const library = [];
 
 function Book(title, author, pageCount, isRead) {
   this.title = title;
@@ -12,19 +10,7 @@ Book.prototype.setIsRead = function(b) {
   this.isRead = b;
 };
 
-// !TEMP FOR TESTING!
-const testBooks = [
-  new Book('The Hobbit', 'Gandalf', 67, false),
-  new Book('The Martian', 'Weir', 310, true),
-  new Book('The Pragmatic Programmer', 'Andrew Hunt & Dave Thomas', 320, false),
-  new Book('Clean Code', 'Avuncular Robert', 400, false),
-  new Book('The DevOps Handbook', 'Gene Kim, et al.', 480, false),
-  new Book('LOTR', 'JRR Tolkein', 600, true),
-];
 
-// !ENDTEMP!
-
-// * === DOM === *
 const bookCntr = document.querySelector('.library');
 const modalAddBookCntr = document.querySelector('#modal-container-addbook');
 const bookStats = {
@@ -56,10 +42,10 @@ function initModalAddBook() {
     });
 
     const book = new Book(...bookArgs);
-    library.set(book.title, book);
+    library.push(book);
     bookCntr.appendChild(getBookElm(book));
     modalAddBookCntr.classList.toggle('hidden');
-    updateFooterData();
+    updateLibrary();
   });
 }
 
@@ -74,13 +60,13 @@ function getBookElm(book) {
   bookIsRead.addEventListener('change',() => {
     const status = bookIsRead.querySelector('input').checked;
     console.log(`checked status: ${status}`);
-    library.get(book.title).setIsRead(status);
+    library[library.indexOf(book)].setIsRead(status);
     if (status) {
       bookElm.classList.add('semi-transparent');
     } else {
       bookElm.classList.remove('semi-transparent');
     }
-    updateFooterData();
+    updateLibrary();
   });
 
   const bookPropElms = [bookTitle, bookAuthor, bookPageCount, bookIsRead];
@@ -89,9 +75,9 @@ function getBookElm(book) {
   });
 
   const deleteBookBtn = getCloseButton(() => {
-    library.delete(book.title);
+    library.splice(library.findIndex(b => b.title === book.title), 1);
     bookCntr.removeChild(bookElm);
-    updateFooterData();
+    updateLibrary();
   });
   deleteBookBtn.classList.add('hidden');
   bookElm.appendChild(deleteBookBtn);
@@ -155,12 +141,13 @@ function validateForm(formContainer) {
 
   for (let i = 0; i < inputs.length; i++) {
     if (inputs[i].value === '') {
-      // TODO: Fancy alert popup
       console.log(`validation failed on input ${inputs[i].name}`);
       validationFailDisplay(inputs[i],'Please fill out this field!', 1);
       return false;
     }
-    if (inputs[i].name='title' && library.get(inputs[i].value)) {
+
+    if (inputs[i].name='title' && library.find((book) => 
+          book.title === inputs[i].value)) {
       console.log(`validation failed on input ${inputs[i].name} (Can't have multiple books with the same title!)`);
       validationFailDisplay(inputs[i], 'Title must be unique!', 1);
       return false;
@@ -196,10 +183,9 @@ function validationFailDisplay(element, msg, decay) {
 
 // * LIBRARY STATS
 function updateFooterData() {
-  const libArray = Array.from(library, ([key, value]) => value);
-  bookStats.totalBooks.textContent = library.size;
-  bookStats.booksRead.textContent = getBooksRead(libArray);
-  bookStats.pagesRead.textContent = getPagesRead(libArray);
+  bookStats.totalBooks.textContent = library.length;
+  bookStats.booksRead.textContent = getBooksRead(library);
+  bookStats.pagesRead.textContent = getPagesRead(library);
 }
 
 function getBooksRead(libArray) {
@@ -213,13 +199,9 @@ function getPagesRead(libArray) {
   );
 }
 
-document.querySelector('.add-book-btn').addEventListener('click', () => {
-  modalAddBookCntr.classList.toggle('hidden');
-});
-
-// TODO: Fix this, starting with... sigh... replacing Map() with []...
+// * LocalStorage Handling
 function saveLibrary() {
-  var libJSON = JSON.stringify(Array.from(library, ([key, value]) => value));
+  var libJSON = JSON.stringify(library);
   window.localStorage.setItem('libraryRecord', libJSON);
 }
 
@@ -227,13 +209,38 @@ function loadLibrary() {
   const libraryRecord = window.localStorage.getItem('libraryRecord');
 
   if (!libraryRecord || libraryRecord == {}) {
-    testBooks.forEach(book => library.set(book.title, book));
+    loadDemoBooks();
   } else {
-    JSON.parse(libraryRecord).forEach(book => library.set(book.title, book));
+    JSON.parse(libraryRecord).forEach(book => {
+      const fullBook = new Book(book.title, book.author, book.pageCount, book.isRead);
+      library.push(fullBook);
+    });
+    library.forEach(book => bookCntr.appendChild(getBookElm(book)));
   }
+}
 
+function loadDemoBooks() {
+  const demoBooks = [
+    new Book('Learning JavaScript Design Patterns', 'Addy Osmani', 246, false),
+    new Book('Introduction to Algorithms', 'Thomas H. Cormen, et al.', 1312, true),
+    new Book('The Pragmatic Programmer', 'Andrew Hunt, Dave Thomas', 320, false),
+    new Book('Clean Code', 'Robert Martin', 400, false),
+    new Book('The DevOps Handbook', 'Gene Kim, et al.', 480, false),
+    new Book('Grokking Algorithms', 'Aditya Bhargava', 256, true),
+  ];
+  demoBooks.forEach(book => library.push(book));
   library.forEach(book => bookCntr.appendChild(getBookElm(book)));
 }
+
+function updateLibrary() {
+  updateFooterData();
+  saveLibrary();
+  console.log('library updated');
+}
+
+document.querySelector('.add-book-btn').addEventListener('click', () => {
+  modalAddBookCntr.classList.toggle('hidden');
+});
 
 initModalAddBook();
 loadLibrary();
