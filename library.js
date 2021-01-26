@@ -25,30 +25,6 @@ const testBooks = [
 testBooks.forEach(book => library.set(book.title, book));
 // !ENDTEMP!
 
-function addBookToLibraryFromBtn() {
-  const constructorInputs = getNewBookPrompt();
-
-  if (Book.length === constructorInputs.length) {
-    const newBook = new Book(...constructorInputs);
-    library.set(newBook.title, newBook);
-    addBookToDom(newBook);
-    return true;
-  } else {
-    // Throw an error
-    console.log('ERROR trying to add book to library--wrong number of inputs.');
-    return false;
-  }
-}
-
-function getNewBookPrompt() {
-  const newProps = [];
-  newProps.push(prompt('What is the book\'s title?'));
-  newProps.push(prompt('Who is the author?'));
-  newProps.push(prompt('How many pages long is it?'));
-  newProps.push(prompt('Have you read it?'));
-  return newProps;
-}
-
 // * === DOM === *
 const bookCntr = document.querySelector('.library');
 const modalAddBookCntr = document.querySelector('#modal-container-addbook');
@@ -73,7 +49,7 @@ function initModalAddBook() {
 
     const book = new Book(...bookArgs);
     library.set(book.title, book);
-    addBookToDom(book);
+    bookCntr.appendChild(getBookElm(book));
     modalAddBookCntr.classList.toggle('hidden');
   });
 }
@@ -120,7 +96,6 @@ function getBookElm(book) {
   if (book.isRead) {
     bookElm.classList.add('semi-transparent');
   }
-  bookElm.setAttribute('data-booktitle',book.title);
 
   return bookElm;
 }
@@ -163,17 +138,9 @@ function getCloseButton(func) {
   return closeBtn;
 }
 
-function addLibraryToDOM() {
-  library.forEach(book => bookCntr.appendChild(getBookElm(book)));
-}
-
-function addBookToDom(book) {
-  bookCntr.appendChild(getBookElm(book));
-}
-
 document.querySelector('.add-book-btn').addEventListener('click', () => {
   modalAddBookCntr.classList.toggle('hidden');
 });
 
 initModalAddBook();
-addLibraryToDOM();
+library.forEach(book => bookCntr.appendChild(getBookElm(book)));
