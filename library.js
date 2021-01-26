@@ -28,6 +28,11 @@ testBooks.forEach(book => library.set(book.title, book));
 // * === DOM === *
 const bookCntr = document.querySelector('.library');
 const modalAddBookCntr = document.querySelector('#modal-container-addbook');
+const bookStats = {
+  totalBooks: document.querySelector('#total-books'),
+  booksRead: document.querySelector('#books-read'),
+  pagesRead: document.querySelector('#pages-read'),
+}
 
 // * Element generators
 
@@ -71,6 +76,7 @@ function getBookElm(book) {
     } else {
       bookElm.classList.remove('semi-transparent');
     }
+    updateFooterData();
   });
 
   const bookPropElms = [bookTitle, bookAuthor, bookPageCount, bookIsRead];
@@ -81,6 +87,7 @@ function getBookElm(book) {
   const deleteBookBtn = getCloseButton(() => {
     library.delete(book.title);
     bookCntr.removeChild(bookElm);
+    updateFooterData();
   });
   deleteBookBtn.classList.add('hidden');
   bookElm.appendChild(deleteBookBtn);
@@ -138,9 +145,31 @@ function getCloseButton(func) {
   return closeBtn;
 }
 
+// LIBRARY STATS
+function updateFooterData() {
+  const libArray = Array.from(library, ([key, value]) => value);
+  bookStats.totalBooks.textContent = library.size;
+  bookStats.booksRead.textContent = getBooksRead(libArray);
+  bookStats.pagesRead.textContent = getPagesRead(libArray);
+}
+
+function getBooksRead(libArray) {
+  return libArray.reduce((sum, book) => 
+    book.isRead ? ++sum : sum, 
+    0
+  );
+}
+function getPagesRead(libArray) {
+  return libArray.reduce((sum, book) => 
+    book.isRead ? sum + book.pageCount : sum, 
+    0
+  );
+}
+
 document.querySelector('.add-book-btn').addEventListener('click', () => {
   modalAddBookCntr.classList.toggle('hidden');
 });
 
 initModalAddBook();
 library.forEach(book => bookCntr.appendChild(getBookElm(book)));
+updateFooterData();
