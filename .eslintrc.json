@@ -9,6 +9,10 @@
     "sourceType": "module"
   },
   "rules": {
-    "func-names": ["error", "as-needed"]
+    "no-console": 0 /* ["error", { allow: ["warn"] }] */,
+    "func-names": ["error", "as-needed"],
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "no-param-reassign": 0,
+    "no-use-before-define": 0
   }
 }
