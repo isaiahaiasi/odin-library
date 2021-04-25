@@ -1,3 +1,6 @@
+import '../styles/reset.css';
+import '../styles/style.css';
+
 const library = [];
 
 function Book(title, author, pageCount, isRead) {
