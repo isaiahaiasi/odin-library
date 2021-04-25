@@ -21,7 +21,6 @@ module.exports = {
     ],
   },
   devServer: {
-    // transportMode: 'ws',
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
     port: 9000,
