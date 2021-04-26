@@ -1,7 +1,12 @@
 import "../styles/reset.css";
 import "../styles/style.css";
 
+import firebase from "firebase/app";
+import firebaseConfig from "./firebase-config";
+
 import Book from "./book";
+
+firebase.initializeApp(firebaseConfig);
 
 const library = [];
 
@@ -269,10 +274,12 @@ function updateLibrary() {
   console.log("library updated");
 }
 
-document.querySelector(".add-book-btn").addEventListener("click", () => {
-  modalAddBookCntr.classList.toggle("hidden");
-});
+export default function initializeLibrary() {
+  document.querySelector(".add-book-btn").addEventListener("click", () => {
+    modalAddBookCntr.classList.toggle("hidden");
+  });
 
-initModalAddBook();
-loadLibrary();
-updateFooterData();
+  initModalAddBook();
+  loadLibrary();
+  updateFooterData();
+}
