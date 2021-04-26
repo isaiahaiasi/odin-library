@@ -1,17 +1,9 @@
 import "../styles/reset.css";
 import "../styles/style.css";
 
-const library = [];
+import Book from "./book";
 
-function Book(title, author, pageCount, isRead) {
-  this.title = title;
-  this.author = author;
-  this.pageCount = pageCount;
-  this.isRead = isRead;
-}
-Book.prototype.setIsRead = function setIsRead(b) {
-  this.isRead = b;
-};
+const library = [];
 
 const bookCntr = document.querySelector(".library");
 const modalAddBookCntr = document.querySelector("#modal-container-addbook");
@@ -143,10 +135,13 @@ function getSwitch(label, name, isChecked) {
   return inputElm;
 }
 
-function getCloseButton(func) {
+// TODO: don't use div as button
+// TODO: pass class in as param
+// TODO: once above are fixed, give generic name
+function getCloseButton(onClick) {
   const closeBtn = document.createElement("div");
   closeBtn.classList.add("close-btn");
-  closeBtn.addEventListener("click", func);
+  closeBtn.addEventListener("click", onClick);
   return closeBtn;
 }
 
