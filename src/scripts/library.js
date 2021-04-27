@@ -1,8 +1,14 @@
+// TODO: refactor styles into a "preload" js bundle
 import "../styles/reset.css";
 import "../styles/style.css";
 
 import Book from "./book";
 
+// TODO: refactor so that there's a true "RENDER" function
+// which clears all the dynamic content & rerenders it
+// TODO: create a library object, which has an addBooks([]) method
+// TODO: create a libraryRenderer function, which can take a Library &
+// generate DOMelements for it
 const library = [];
 
 const bookCntr = document.querySelector(".library");

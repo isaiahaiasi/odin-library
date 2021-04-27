@@ -14,6 +14,8 @@
     <link rel="manifest" href="site.webmanifest">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   </head>
+
+
   <body>
     <header>
       <h1>Babel Public Library Test 2 path</h1>
@@ -22,12 +24,15 @@
       <section id='when-signed-out'>
         <button class='btn-sign-in' id='sign-in-btn'>Sign in with google</button>
       </section>
-      <section id='when-signed-in' hidden="true">
+      <section id='when-signed-in' class='hidden'>
         <button class='btn-sign-out' id='sign-out-btn'>Sign out</button>
       </section>
       <section id='user-details'>
-        <p>User name:</p>
+        <h2>User details</h2>
+        <h3>User name:</h3>
         <p id='user-name'>...</p>
+        <h3>User id:</h3>
+        <p id='user-id'>...</p>
       </section>
     </div>
     <main class='card semi-transparent'>
