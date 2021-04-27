@@ -4,11 +4,15 @@ import "../styles/style.css";
 
 import Book from "./book";
 
+import { getCloseButton } from "./dom-helpers";
+import bookView from "./views/book-view";
+
 // TODO: refactor so that there's a true "RENDER" function
 // which clears all the dynamic content & rerenders it
+// TODO:
 // TODO: create a library object, which has an addBooks([]) method
 // TODO: create a libraryRenderer function, which can take a Library &
-// generate DOMelements for it
+// generate DOM elements for it
 const library = [];
 
 const bookCntr = document.querySelector(".library");
@@ -20,7 +24,6 @@ const bookStats = {
 };
 
 // * Element generators
-
 function initModalAddBook() {
   // ADD FORM ELEMENTS
   modalAddBookCntr.querySelector(".modal").appendChild(
@@ -53,103 +56,20 @@ function initModalAddBook() {
 
     const book = new Book(...bookArgs);
     library.push(book);
-    bookCntr.appendChild(getBookElm(book));
+    bookCntr.appendChild(bookView(book));
     modalAddBookCntr.classList.toggle("hidden");
     updateLibrary();
   });
 }
 
-function getBookElm(book) {
-  const bookElm = document.createElement("div");
-
-  const bookTitle = getBookPropertyElm(book, "title");
-  const bookAuthor = getBookPropertyElm(book, "author");
-  const bookPageCount = getBookPropertyElm(book, "pageCount");
-
-  const bookIsRead = getSwitch("is read:", "isRead", book.isRead);
-  bookIsRead.addEventListener("change", () => {
-    const status = bookIsRead.querySelector("input").checked;
-    console.log(`checked status: ${status}`);
-    library[library.indexOf(book)].setIsRead(status);
-    if (status) {
-      bookElm.classList.add("semi-transparent");
-    } else {
-      bookElm.classList.remove("semi-transparent");
-    }
-    updateLibrary();
-  });
-
-  const bookPropElms = [bookTitle, bookAuthor, bookPageCount, bookIsRead];
-  bookPropElms.forEach((bookPropElm) => {
-    bookElm.appendChild(bookPropElm);
-  });
-
-  const deleteBookBtn = getCloseButton(() => {
-    library.splice(
-      library.findIndex((b) => b.title === book.title),
-      1
-    );
-    bookCntr.removeChild(bookElm);
-    updateLibrary();
-  });
-  deleteBookBtn.classList.add("hidden");
-  bookElm.appendChild(deleteBookBtn);
-
-  ["mouseenter", "mouseleave"].forEach((cardEvent) => {
-    bookElm.addEventListener(cardEvent, () => {
-      deleteBookBtn.classList.toggle("hidden");
-    });
-  });
-
-  bookElm.classList.add("book");
-  bookElm.classList.add("card");
-  if (book.isRead) {
-    bookElm.classList.add("semi-transparent");
-  }
-
-  return bookElm;
-}
-
-function getBookPropertyElm(book, property) {
-  const bookPropertyElm = document.createElement("div");
-  bookPropertyElm.textContent = book[property];
-  bookPropertyElm.classList.add("book-prop");
-  bookPropertyElm.classList.add(`book-${property}`);
-
-  return bookPropertyElm;
-}
-
-function getSwitch(label, name, isChecked) {
-  const inputElm = document.createElement("label");
-  inputElm.classList.add("switch");
-
-  const textElm = document.createElement("span");
-  textElm.textContent = label;
-  textElm.classList.add("switch-label");
-  inputElm.appendChild(textElm);
-
-  const inputCheckbox = document.createElement("input");
-  inputCheckbox.type = "checkbox";
-  inputCheckbox.name = name;
-  inputCheckbox.checked = isChecked;
-  inputElm.appendChild(inputCheckbox);
-
-  const inputSpanElm = document.createElement("span");
-  inputSpanElm.classList.add("switch-span");
-  inputElm.appendChild(inputSpanElm);
-
-  return inputElm;
-}
-
-// TODO: don't use div as button
-// TODO: pass class in as param
-// TODO: once above are fixed, give generic name
-function getCloseButton(onClick) {
-  const closeBtn = document.createElement("div");
-  closeBtn.classList.add("close-btn");
-  closeBtn.addEventListener("click", onClick);
-  return closeBtn;
-}
+const deleteBookFunction = (book) => {
+  library.splice(
+    library.findIndex((b) => b.title === book.title),
+    1
+  );
+  bookCntr.removeChild(bookElm);
+  updateLibrary();
+};
 
 // * FORM VALIDATION
 function validateForm(formContainer) {
@@ -242,7 +162,7 @@ function loadLibrary() {
       );
       library.push(fullBook);
     });
-    library.forEach((book) => bookCntr.appendChild(getBookElm(book)));
+    library.forEach((book) => bookCntr.appendChild(bookView(book)));
   }
 }
 
@@ -266,7 +186,7 @@ function loadDemoBooks() {
     new Book("Grokking Algorithms", "Aditya Bhargava", 256, true),
   ];
   demoBooks.forEach((book) => library.push(book));
-  library.forEach((book) => bookCntr.appendChild(getBookElm(book)));
+  library.forEach((book) => bookCntr.appendChild(bookView(book)));
 }
 
 function updateLibrary() {
