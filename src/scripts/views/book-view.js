@@ -32,15 +32,16 @@ const bookView = (book, onIsReadChange, onDeleteBook) => {
     "isRead",
     book.isRead,
     (switchValue) => {
-      onIsReadChange(switchValue);
+      onIsReadChange(book.id, switchValue);
       updateIsReadStyle(switchValue);
     }
   );
 
   //* Delete button
   const deleteBtn = getCloseButton(() => {
-    onDeleteBook(book);
+    onDeleteBook(book.id);
   });
+
   deleteBtn.classList.add("hidden");
   ["mouseenter", "mouseleave"].forEach((eventType) => {
     bookElement.addEventListener(eventType, () => {

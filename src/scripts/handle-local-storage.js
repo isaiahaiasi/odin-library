@@ -1,7 +1,7 @@
 import Book from "./book";
 
-export function save(library) {
-  const libJSON = JSON.stringify(library);
+export function save(books) {
+  const libJSON = JSON.stringify(books);
   window.localStorage.setItem("libraryRecord", libJSON);
 }
 
@@ -9,7 +9,7 @@ export function load() {
   const libraryRecord =
     window.localStorage.getItem("libraryRecord") ?? getDemoBooksJson();
 
-  return JSON.parse(libraryRecord).map((book) => new Book(...book));
+  return JSON.parse(libraryRecord).map((book) => new Book({ ...book }));
 }
 
 // TODO: give IDs

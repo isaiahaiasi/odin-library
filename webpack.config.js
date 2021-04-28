@@ -4,7 +4,7 @@ module.exports = {
   mode: "development",
   devtool: "inline-source-map", // fix for webpack-dev-server error in console
   entry: {
-    library: "./src/scripts/library.js",
+    library: "./src/scripts/index.js",
     firebase: "./src/scripts/firebase-init.js",
   },
   output: {

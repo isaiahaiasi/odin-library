@@ -1,4 +1,4 @@
-import getCloseButton from "./dom-helpers";
+import { getCloseButton } from "./dom-helpers";
 import validateForm from "./form-validation";
 import Book from "./book";
 
@@ -25,8 +25,8 @@ export default function modalView(library) {
   }
 
   // TODO: refactor to use event object!!
-  function handleSubmitForm(e) {
-    const validationResponse = validateForm(modalAddBookCntr);
+  function handleSubmitForm() {
+    const validationResponse = validateForm(modalAddBookCntr, library);
 
     // need to use *strict* equality, because if false I return an error obj
     // (sorry)
@@ -38,12 +38,13 @@ export default function modalView(library) {
       return;
     }
 
-    const bookArgs = [];
+    const bookArgs = {};
     modalAddBookCntr.querySelectorAll("input").forEach((input) => {
-      bookArgs.push(input.type === "checkbox" ? input.checked : input.value);
+      bookArgs[input.name] =
+        input.type === "checkbox" ? input.checked : input.value;
     });
 
-    library.addBook(new Book(...bookArgs)); // *this* is where the magic happens
+    library.addBooks(new Book(bookArgs));
     handleCloseModal();
   }
 
@@ -67,4 +68,6 @@ export default function modalView(library) {
       popup.remove();
     }
   }
+
+  return modalAddBookCntr;
 }

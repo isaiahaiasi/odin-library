@@ -1,31 +1,37 @@
-// TODO: create a library object, which has an addBooks([]) method
+export default function Library(onUpdate) {
+  let books = [];
 
-export default function Library() {
-  const books = [];
-  const renderListeners = [];
-
-  // TODO
-  function addBook(book) {
-    books.push(book);
+  function addBooks(...newBooks) {
+    books = [...books, ...newBooks];
+    onUpdate();
   }
 
-  // TODO
-  function deleteBook(book) {
-    books.splice(
-      books.findIndex((b) => b.title === book.title),
-      1
-    );
-    render();
+  function deleteBook(id) {
+    books = books.filter((book) => book.id !== id);
+    onUpdate();
   }
 
-  function addRenderListener() {
-    // TODO
+  function setIsBookRead(id, bool) {
+    const book = books.find((b) => b.id === id);
+    if (!book) {
+      throw new Error(`could not find book with id ${id} in library!`);
+    }
+
+    book.setIsRead(bool);
+
+    // unfortunately, I've tied re-render to save...
+    // which means I can't get an animation for this...
+    onUpdate();
   }
 
-  function render() {
-    // TODO TODO TODO
-    // clear all the dynamic content & rerenders it
-  }
+  onUpdate();
 
-  return { addBook, deleteBook, addRenderListener };
+  return {
+    get books() {
+      return books;
+    },
+    addBooks,
+    deleteBook,
+    setIsBookRead,
+  };
 }

@@ -33,3 +33,9 @@ export function getCloseButton(onClick) {
   closeBtn.addEventListener("click", onClick);
   return closeBtn;
 }
+
+export function clearChildren(element) {
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
+  }
+}

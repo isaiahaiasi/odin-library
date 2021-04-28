@@ -53,21 +53,41 @@ const db = firebase.firestore();
 
 // });
 
-auth.onAuthStateChanged((user) => {
+auth.onAuthStateChanged(handleDatabaseStuff);
+
+function handleDatabaseStuff(user) {
   if (!user) {
     console.log("no user!");
     return;
   }
 
-  const libraryRef = db.collection("library");
-  // TODO: write this function...
-  addHandlerToAddBookButton((bookData) => {
-    const { serverTimestamp } = firebase.firestore.FieldValue;
+  const libraryRef = db.collection(`users/${user.uid}/library`);
 
-    libraryRef.add({
-      uid: user.uid,
-      addedTimestamp: serverTimestamp(),
-      ...bookData,
-    });
+  addHandlerToAddBookButton((bookData) => {
+    handleAddBookToDatabase(bookData, libraryRef, user);
   });
-});
+
+  // TODO: function to render database out
+  libraryRef
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        console.log("Document data:", doc.data());
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting document:", error);
+    });
+}
+
+function handleAddBookToDatabase(bookData, libraryRef) {
+  const { serverTimestamp } = firebase.firestore.FieldValue;
+
+  libraryRef.add({
+    addedTimestamp: serverTimestamp(),
+    ...bookData,
+  });
+}

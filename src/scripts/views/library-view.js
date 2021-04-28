@@ -1,7 +1,8 @@
 import bookView from "./book-view";
 
 // TODO: not sure if I should generate or query for the container
-const libraryView = (library) => {
+const LibraryView = (library) => {
+  // * Define html
   const bookHeadingsHtml = `
       <div class='book-prop'>Title</div>
       <div class='book-prop'>Author</div>
@@ -12,14 +13,18 @@ const libraryView = (library) => {
   bookHeadings.classList.add("card", "book", "library-header");
   bookHeadings.innerHTML = bookHeadingsHtml;
 
-  const libraryElement = document.querySelector(".library");
+  const libraryElement = document.createElement("div");
+  libraryElement.classList.add("library");
 
   libraryElement.appendChild(bookHeadings);
-  library.forEach((book) => {
+
+  library.books.forEach((book) => {
     libraryElement.appendChild(
-      bookView(book, library.setBookIsRead, library.handleDeleteBook)
+      bookView(book, library.setIsBookRead, library.deleteBook)
     );
   });
+
+  return libraryElement;
 };
 
-export default libraryView;
+export default LibraryView;

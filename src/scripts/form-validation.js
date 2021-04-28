@@ -7,7 +7,7 @@
 export default function validateForm(form, library) {
   const inputs = form.querySelectorAll("input[required]");
 
-  const emptyInput = inputs.find((input) => input.value === "");
+  const emptyInput = [...inputs].find((input) => input.value === "");
 
   if (emptyInput) {
     return {
