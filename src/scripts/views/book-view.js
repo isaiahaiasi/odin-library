@@ -1,6 +1,6 @@
 import { getCloseButton, makeSwitch } from "../dom-helpers";
 
-const bookView = (book, onIsReadChange, onDeleteBook) => {
+const bookView = (book, setBook, onDeleteBook) => {
   const getBookPropertyElement = (property) => {
     const bookPropertyElement = document.createElement("div");
     bookPropertyElement.textContent = book[property];
@@ -32,8 +32,8 @@ const bookView = (book, onIsReadChange, onDeleteBook) => {
     "isRead",
     book.isRead,
     (switchValue) => {
-      onIsReadChange(book.id, switchValue);
       updateIsReadStyle(switchValue);
+      setBook({ id: book.id, isRead: switchValue });
     }
   );
 

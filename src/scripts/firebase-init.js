@@ -46,7 +46,7 @@ export function authHandler() {
 
 export function firestoreHandler(onAuthStateChanged) {
   const db = firebase.firestore();
-  const databaseUpdateListeners = [];
+  let databaseUpdateListeners = [];
   let libraryRef;
 
   onAuthStateChanged(updateLibraryRef);
@@ -68,7 +68,16 @@ export function firestoreHandler(onAuthStateChanged) {
   }
 
   function handleDatabaseUpdate() {
-    databaseUpdateListeners.forEach((listener) => listener());
+    // This feels... dirty :/
+    const activeListeners = databaseUpdateListeners.filter(
+      (listener) => !!listener
+    );
+
+    activeListeners.forEach((listener) => {
+      listener();
+    });
+
+    databaseUpdateListeners = activeListeners;
   }
 
   function onDatabaseUpdate(callback) {
@@ -94,13 +103,15 @@ export function firestoreHandler(onAuthStateChanged) {
     await libraryRef.doc(bookData.id).set(
       {
         lastChangedTimestamp: serverTimestamp(),
-        ...bookData,
+        isRead: bookData.isRead,
       },
       {
         // b/c at the very least I want to keep addedTimestamp
         merge: true,
       }
     );
+
+    onDatabaseUpdate();
   }
 
   async function removeBook(bookId) {
