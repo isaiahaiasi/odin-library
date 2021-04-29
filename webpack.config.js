@@ -5,7 +5,6 @@ module.exports = {
   devtool: "inline-source-map", // fix for webpack-dev-server error in console
   entry: {
     library: "./src/scripts/index.js",
-    firebase: "./src/scripts/firebase-init.js",
   },
   output: {
     filename: "[name].bundle.js",

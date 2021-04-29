@@ -1,13 +1,24 @@
+function callAll(callbacks, ...args) {
+  callbacks.forEach((callback) => callback(...args));
+}
+
 export default function Library(onUpdate) {
   let books = [];
+  const listeners = {
+    bookAdded: [],
+    bookRemoved: [],
+  };
 
-  function addBooks(...newBooks) {
-    books = [...books, ...newBooks];
+  function addBook(book) {
+    books.push(book);
+    callAll(listeners.bookAdded, book);
+
     onUpdate();
   }
 
   function deleteBook(id) {
     books = books.filter((book) => book.id !== id);
+    callAll(listeners.bookRemoved, id);
     onUpdate();
   }
 
@@ -24,14 +35,25 @@ export default function Library(onUpdate) {
     onUpdate();
   }
 
+  // takes a sub, pubs all subs when
+  function onAddBook(listener) {
+    listeners.bookAdded.push(listener);
+  }
+
+  function onDeleteBook(listener) {
+    listeners.bookRemoved.push(listener);
+  }
+
   onUpdate();
 
   return {
     get books() {
       return books;
     },
-    addBooks,
+    addBook,
     deleteBook,
     setIsBookRead,
+    onAddBook,
+    onDeleteBook,
   };
 }

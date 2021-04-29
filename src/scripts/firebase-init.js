@@ -3,11 +3,13 @@ import firebaseConfig from "./firebase-config";
 import "firebase/firebase-firestore";
 import "firebase/firebase-auth";
 
-export default function firebaseHandler(library) {
-  firebase.initializeApp(firebaseConfig);
-  // * AUTH ---------------------------------------
+firebase.initializeApp(firebaseConfig);
+
+export function authHandler() {
   const auth = firebase.auth();
   const provider = new firebase.auth.GoogleAuthProvider();
+
+  auth.onAuthStateChanged = auth.onAuthStateChanged.bind(auth);
 
   const signedInSection = document.querySelector("#when-signed-out");
   const signedOutSection = document.querySelector("#when-signed-in");
@@ -39,62 +41,78 @@ export default function firebaseHandler(library) {
     }
   });
 
-  // * FIRESTORE ---------------------------------------
+  return auth.onAuthStateChanged;
+}
 
+export function firestoreHandler(onAuthStateChanged) {
   const db = firebase.firestore();
+  let libraryRef;
 
-  // need a way to listen for when the "add book" button is created,
-  // and then handle that here
+  onAuthStateChanged(updateLibraryRef);
 
-  // TODO: fetch books from database
-  // function getUsersBooks((user, libraryRef) => {
-
-  // });
-
-  auth.onAuthStateChanged(handleDatabaseStuff);
-
-  async function handleDatabaseStuff(user) {
+  async function updateLibraryRef(user) {
     if (!user) {
       console.log("no user!");
-      return;
     }
 
     await db.collection("users").doc(user.uid).set({}, { merge: true });
 
-    const libraryRef = db.collection(`users/${user.uid}/books`);
+    libraryRef = db.collection(`users/${user.uid}/books`);
 
-    // TODO: function to render database out
-    // TODO: replace callbacks w firebase db listener...
     const librarySnapshot = await libraryRef.get();
-
     console.log("Document data:", librarySnapshot.docs);
-
-    library.onAddBook((bookData) => {
-      addBookToDatabase(bookData, libraryRef);
-    });
-
-    library.onDeleteBook((bookId) => {
-      removeBookFromDatabase(bookId, libraryRef);
-    });
   }
 
-  function addBookToDatabase(bookData, libraryRef) {
+  // all of these functions are asynchronous, because I want to make sure
+  // I don't try to re-render before the data is updated
+  async function addBook(bookData) {
     const { serverTimestamp } = firebase.firestore.FieldValue;
 
-    libraryRef.add({
+    await libraryRef.add({
       addedTimestamp: serverTimestamp(),
+      lastChangedTimestamp: serverTimestamp(),
       ...bookData,
     });
   }
 
-  function removeBookFromDatabase(bookId, libraryRef) {
-    libraryRef
+  async function setBook(bookData) {
+    const { serverTimestamp } = firebase.firestore.FieldValue;
+    await libraryRef.doc(bookData.id).set(
+      {
+        lastChangedTimestamp: serverTimestamp(),
+        ...bookData,
+      },
+      {
+        // b/c at the very least I want to keep addedTimestamp
+        merge: true,
+      }
+    );
+  }
+
+  async function removeBook(bookId) {
+    await libraryRef
       .doc(bookId)
       .then(() => {
-        console.log(`Book ${bookId} removed from database!`);
+        console.log(`TODO: Book ${bookId} removed from database!`);
       })
       .catch(() => {
         console.log("Error removing book from database!");
       });
   }
+
+  async function getBooks() {
+    if (!libraryRef) {
+      return null;
+    }
+
+    const librarySnapshot = await libraryRef.get();
+    return librarySnapshot.docs.map((doc) => doc.data());
+  }
+
+  return {
+    addBook,
+    setBook,
+    removeBook,
+    getBooks,
+  };
 }

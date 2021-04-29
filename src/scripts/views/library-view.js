@@ -1,7 +1,7 @@
 import bookView from "./book-view";
 
 // TODO: not sure if I should generate or query for the container
-const LibraryView = (library) => {
+const LibraryView = (books, setBook, removeBook) => {
   // * Define html
   const bookHeadingsHtml = `
       <div class='book-prop'>Title</div>
@@ -18,10 +18,8 @@ const LibraryView = (library) => {
 
   libraryElement.appendChild(bookHeadings);
 
-  library.books.forEach((book) => {
-    libraryElement.appendChild(
-      bookView(book, library.setIsBookRead, library.deleteBook)
-    );
+  books.forEach((book) => {
+    libraryElement.appendChild(bookView(book, setBook, removeBook));
   });
 
   return libraryElement;

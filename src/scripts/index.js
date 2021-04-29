@@ -2,54 +2,57 @@
 import "../styles/reset.css";
 import "../styles/style.css";
 
-import { load, save } from "./handle-local-storage";
-import Library from "./library";
+// import { load, save } from "./handle-local-storage";
 import modalView from "./modal";
 import LibraryView from "./views/library-view";
 import { clearChildren } from "./dom-helpers";
+import { authHandler, firestoreHandler } from "./firebase-init";
 
 const renderListeners = [];
 
-// UPDATE RENDER YADDA YADDA
 function render() {
   renderListeners.forEach((listener) => listener());
 }
 
 // define function for adding render listeners
-const addRenderListener = (listener) => {
+function addRenderListener(listener) {
   renderListeners.push(listener);
-};
+}
 
-const renderView = (view, container) => {
+function renderView(view, container) {
   clearChildren(container);
   container.appendChild(view);
-};
+}
 
-// * Initialize library & add a libraryView renderer to the renderListeners
-// ? Library probably shouldn't be responsible for render,
-// but I'm loathe to add a pubsub system
-const library = Library(render);
-library.addBooks(...load());
+// pretty sure I actually want to replace Library with Firestore entirely
+// firebaseHandler just needs to be passed onAdd/onRemove/onSet
+const onAuthStateChange = authHandler();
+const fb = firestoreHandler(onAuthStateChange);
 
-const onLibraryUpdate = () => {
+async function renderLibrary() {
+  const books = (await fb.getBooks()) ?? [];
+  console.log("books", books);
   const libraryContainer = document.querySelector(".library-container");
-  const libraryView = LibraryView(library);
+  const libraryView = LibraryView(books);
   renderView(libraryView, libraryContainer);
-  save(library.books);
-};
+  // save(books);
+}
 
-addRenderListener(onLibraryUpdate);
+addRenderListener(renderLibrary);
 
 // * Initialize modal "Add Book" form
-const addBookModal = modalView(library);
+const addBookModal = modalView(fb.addBook);
 
 document.querySelector(".add-book-btn").addEventListener("click", () => {
   addBookModal.classList.toggle("hidden");
 });
 
-render();
+onAuthStateChange(render);
 
-// TODO: init firebase
-// TODO: figure out who should have the responsibility of updating firebase...
+//! TEMP
+const renderBtn = document.createElement("button");
+renderBtn.addEventListener("click", render);
+renderBtn.textContent = "re-render";
+document.querySelector("main").appendChild(renderBtn);
 
 // TODO: init stats renderer

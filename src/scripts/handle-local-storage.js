@@ -1,3 +1,6 @@
+// TODO: remove Book dependency
+// TODO: take user ids, use that as key
+
 import Book from "./book";
 
 export function save(books) {

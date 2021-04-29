@@ -1,8 +1,7 @@
 import { getCloseButton } from "./dom-helpers";
 import validateForm from "./form-validation";
-import Book from "./book";
 
-export default function modalView(library) {
+export default function modalView(addBook) {
   const modalAddBookCntr = document.querySelector("#modal-container-addbook");
 
   const inputs = modalAddBookCntr.querySelectorAll("input");
@@ -26,7 +25,7 @@ export default function modalView(library) {
 
   // TODO: refactor to use event object!!
   function handleSubmitForm() {
-    const validationResponse = validateForm(modalAddBookCntr, library);
+    const validationResponse = validateForm(modalAddBookCntr);
 
     // need to use *strict* equality, because if false I return an error obj
     // (sorry)
@@ -44,7 +43,8 @@ export default function modalView(library) {
         input.type === "checkbox" ? input.checked : input.value;
     });
 
-    library.addBooks(new Book(bookArgs));
+    addBook(bookArgs);
+
     handleCloseModal();
   }
 
