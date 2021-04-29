@@ -85,6 +85,8 @@ export function firestoreHandler(onAuthStateChanged) {
       lastChangedTimestamp: serverTimestamp(),
       ...bookData,
     });
+
+    handleDatabaseUpdate();
   }
 
   async function setBook(bookData) {
@@ -102,14 +104,22 @@ export function firestoreHandler(onAuthStateChanged) {
   }
 
   async function removeBook(bookId) {
-    await libraryRef
-      .doc(bookId)
+    if (!libraryRef) {
+      console.log("no library reference");
+      return;
+    }
+
+    const selectedBookRef = await libraryRef.doc(bookId);
+    selectedBookRef
+      .delete()
       .then(() => {
-        console.log(`TODO: Book ${bookId} removed from database!`);
+        console.log(`${bookId} successfully deleted!`);
       })
       .catch(() => {
-        console.log("Error removing book from database!");
+        console.log(`Error deleting ${bookId}!`);
       });
+
+    handleDatabaseUpdate();
   }
 
   async function getBooks() {

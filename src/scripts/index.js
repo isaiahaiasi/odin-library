@@ -33,7 +33,7 @@ async function renderLibrary() {
   const books = (await db.getBooks()) ?? [];
   console.log("books", books);
   const libraryContainer = document.querySelector(".library-container");
-  const libraryView = LibraryView(books);
+  const libraryView = LibraryView(books, db.setBook, db.removeBook);
   renderView(libraryView, libraryContainer);
   // save(books);
 }
