@@ -46,6 +46,7 @@ export function authHandler() {
 
 export function firestoreHandler(onAuthStateChanged) {
   const db = firebase.firestore();
+  const databaseUpdateListeners = [];
   let libraryRef;
 
   onAuthStateChanged(updateLibraryRef);
@@ -61,6 +62,17 @@ export function firestoreHandler(onAuthStateChanged) {
 
     const librarySnapshot = await libraryRef.get();
     console.log("Document data:", librarySnapshot.docs);
+
+    // so render functions know when to actually be called
+    handleDatabaseUpdate();
+  }
+
+  function handleDatabaseUpdate() {
+    databaseUpdateListeners.forEach((listener) => listener());
+  }
+
+  function onDatabaseUpdate(callback) {
+    databaseUpdateListeners.push(callback);
   }
 
   // all of these functions are asynchronous, because I want to make sure
@@ -106,7 +118,7 @@ export function firestoreHandler(onAuthStateChanged) {
     }
 
     const librarySnapshot = await libraryRef.get();
-    return librarySnapshot.docs.map((doc) => doc.data());
+    return librarySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   }
 
   return {
@@ -114,5 +126,6 @@ export function firestoreHandler(onAuthStateChanged) {
     setBook,
     removeBook,
     getBooks,
+    onDatabaseUpdate,
   };
 }

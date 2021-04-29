@@ -27,10 +27,10 @@ function renderView(view, container) {
 // pretty sure I actually want to replace Library with Firestore entirely
 // firebaseHandler just needs to be passed onAdd/onRemove/onSet
 const onAuthStateChange = authHandler();
-const fb = firestoreHandler(onAuthStateChange);
+const db = firestoreHandler(onAuthStateChange);
 
 async function renderLibrary() {
-  const books = (await fb.getBooks()) ?? [];
+  const books = (await db.getBooks()) ?? [];
   console.log("books", books);
   const libraryContainer = document.querySelector(".library-container");
   const libraryView = LibraryView(books);
@@ -41,15 +41,16 @@ async function renderLibrary() {
 addRenderListener(renderLibrary);
 
 // * Initialize modal "Add Book" form
-const addBookModal = modalView(fb.addBook);
+const addBookModal = modalView(db.addBook);
 
 document.querySelector(".add-book-btn").addEventListener("click", () => {
   addBookModal.classList.toggle("hidden");
 });
 
-onAuthStateChange(render);
+// library should re-render when the database changes
+db.onDatabaseUpdate(render);
 
-//! TEMP
+//! TEMP "RE-RENDER" BUTTON
 const renderBtn = document.createElement("button");
 renderBtn.addEventListener("click", render);
 renderBtn.textContent = "re-render";
